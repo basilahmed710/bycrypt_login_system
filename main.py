@@ -21,6 +21,39 @@ def main():
             print("Exiting...")
             break
 
-if __name__ == "__main__":
-    main()
+
+
+import sqlite3
+
+conn = sqlite3.connect('Data/intelligence_platform.db')
+curr = conn.cursor()
+sql = (""" INSERT INTO users (username, password_hash) VALUES (?, ?) """)
+param =('alice', 'hashed_password_123',)
+curr.execute(sql,param)
+conn.commit()
+conn.close
+
+def add_user(conn, name, hash):
+    curr = conn.cursor()
+    sql =(""" INSERT INTO users  (username, password_hash) VALUES (?, ?) """)
+    param =(name,hash)
+    curr.execute(sql, param)
+    conn.commit()
+    conn.close()
+
+def get_users():
+    curr = conn.cursor()
+    sql = ("""SELECT * FROM USERS""")
+    curr.execute(sql)
+    users = curr.fetchall()
+    conn.close()
+    return users
+
+def migrate_users():
+    with open('user.txt', 'r') as f:
+        users = f.readlines()
+    for user in users:
+        name, hash = user.strip().split(',')
+        add_user(conn, name, hash)
+    conn.close()
 
