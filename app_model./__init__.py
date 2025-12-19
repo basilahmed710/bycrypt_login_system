@@ -1,0 +1,1 @@
+from bscript_test.app_model import get_connection

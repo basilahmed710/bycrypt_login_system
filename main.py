@@ -1,36 +1,47 @@
-from app.data.db import connect_database
-from app.data.schema import create_all_tables
-from app.services.user_service import register_user, login_user, migrate_users_from_file
-from app.data.incidents import insert_incident, get_all_incidents
+import bcrypt
+import sqlite3
+import pandas as pd
+from app_model.db import conn
+from app_model.users import add_user, get_user
+from hashing import hash_password, validate_password
+
+# Function to register a new user
+def register_user(conn):
+    username = input("Enter username: ")
+    password = input("Enter password: ")
+
+   
+    with open("DATA/user.txt", "a") as f:
+        f.write(f"{username},{hash_password}\n")
+    print("User registered successfully.")
+
+# Function to login a user
+def login_user(conn):
+    name = input("Enter username: ")
+    password = input("Enter password: ")
+
+
+    
+    
+def menu():
+    print("1. Register")
+    print("2. Login")   
+    print("3. Exit")
+
 
 def main():
-    print("==== Week 8 Database Demo ====")
+    while True:
+        menu()
+        choice = input("Enter choice: ")
+        if choice == "1":
+            register_user(conn)
+        elif choice == "2":
+            login_user(conn)
+        elif choice == "3":
+            print("Exiting...")
+            break
 
-    conn = connect_database()
-    create_all_tables(conn)
-    conn.close()
 
-    migrate_users_from_file()
-
-    success, msg = register_user("alice", "Pass123!", "analyst")
-    print(msg)
-
-    success, msg = login_user("alice", "Pass123!")
-    print(msg)
-
-    incident_id = insert_incident(
-        "2024-11-05",
-        "Phishing",
-        "High",
-        "Open",
-        "Suspicious email detected",
-        "alice"
-    )
-    print(f"Created incident #{incident_id}")
-
-    df = get_all_incidents()
-    print(df.head())
 
 if __name__ == "__main__":
     main()
-
